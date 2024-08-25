@@ -1,0 +1,29 @@
+name: 'KXCBridge: Tag Release'
+description: 'Tag version for SPM'
+author: 'Kevin Galligan'
+
+# Add your action's branding here. This will appear on the GitHub Marketplace.
+branding:
+  icon: 'heart'
+  color: 'red'
+
+inputs:
+  commitMessage:
+    description: 'Message for Package.swift commit'
+    required: true
+  remoteRepoUrl:
+    description: 'URL to remote repo'
+    required: true
+  localPackagePath:
+    description: 'Local path to Package.swift'
+    required: false
+  remotePackagePath:
+    description: 'Remote path to Package.swift'
+    required: false
+  remoteBranch:
+    description: 'Remote repo branch'
+    required: true
+
+runs:
+  using: node20
+  main: dist/index.js
