@@ -31188,15 +31188,18 @@ const fs = __importStar(__nccwpck_require__(7147));
 async function run() {
     try {
         const commitMessage = core.getInput('commitMessage');
-        const remoteRepoUrl = core.getInput('remoteRepoUrl');
+        const remoteRepo = core.getInput('remoteRepo');
+        let remoteRepoUrl = core.getInput('remoteRepoUrl');
         const localPackagePath = core.getInput('localPackagePath');
         const remotePackagePath = core.getInput('remotePackagePath');
         const remoteBranch = core.getInput('remoteBranch');
         core.debug(`commitMessage: ${commitMessage}`);
+        core.debug(`remoteRepo: ${remoteRepo}`);
         core.debug(`remoteRepoUrl: ${remoteRepoUrl}`);
         core.debug(`localPackagePath: ${localPackagePath}`);
         core.debug(`remotePackagePath: ${remotePackagePath}`);
         core.debug(`remoteBranch: ${remoteBranch}`);
+        remoteRepoUrl = remoteRepoUrl ? remoteRepoUrl : `https://github.com/${remoteRepo}.git`;
         const git = (0, simple_git_1.default)();
         await git.pull();
         await git.raw('fetch', remoteRepoUrl, remoteBranch);

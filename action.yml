@@ -11,9 +11,12 @@ inputs:
   commitMessage:
     description: 'Message for Package.swift commit'
     required: true
+  remoteRepo:
+    description: 'Remote repo [org]/[repo]'
+    required: true
   remoteRepoUrl:
     description: 'URL to remote repo'
-    required: true
+    required: false
   localPackagePath:
     description: 'Local path to Package.swift'
     required: false

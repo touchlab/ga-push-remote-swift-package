@@ -5,16 +5,20 @@ import * as fs from 'fs'
 export async function run(): Promise<void> {
   try {
     const commitMessage: string = core.getInput('commitMessage')
-    const remoteRepoUrl: string = core.getInput('remoteRepoUrl')
+    const remoteRepo: string = core.getInput('remoteRepo')
+    let remoteRepoUrl: string = core.getInput('remoteRepoUrl')
     const localPackagePath: string = core.getInput('localPackagePath')
     const remotePackagePath: string = core.getInput('remotePackagePath')
     const remoteBranch: string = core.getInput('remoteBranch')
 
     core.debug(`commitMessage: ${commitMessage}`)
+    core.debug(`remoteRepo: ${remoteRepo}`)
     core.debug(`remoteRepoUrl: ${remoteRepoUrl}`)
     core.debug(`localPackagePath: ${localPackagePath}`)
     core.debug(`remotePackagePath: ${remotePackagePath}`)
     core.debug(`remoteBranch: ${remoteBranch}`)
+
+    remoteRepoUrl = remoteRepoUrl ? remoteRepoUrl : `https://github.com/${remoteRepo}.git`
 
     const git = simpleGit()
 
