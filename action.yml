@@ -1,27 +1,29 @@
-name: 'KXCBridge: Tag Release'
-description: 'Tag version for SPM'
+name: 'KMMBridge: Remote SPM Publishing Support'
+description: 'Publish KMP SPM builds to a remote repo'
 author: 'Kevin Galligan'
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: 'heart'
-  color: 'red'
+  icon: 'external-link'
+  color: 'orange'
 
 inputs:
   commitMessage:
-    description: 'Message for Package.swift commit'
+    description: 'Message for the commit which updates the `Package.swift` file.'
     required: true
   tagMessage:
-    description: 'Message for release tag'
-    required: true
+    description: 'Message for the version tag commit. Defaults to "Version ${tagVersion}".'
+    required: false
   tagVersion:
-    description: 'The release version'
+    description: 'Version string to use in the tag. Should follow semver rules: https://semver.org/.'
     required: true
   remoteRepo:
-    description: 'Remote repo [org]/[repo]'
+    description: 'Repo we are publishing to in [org]/[repo] format.'
+    required: true
+  remoteBranch:
+    description: 'Branch we are pushing to.'
     required: true
   remoteRepoUrl:
-    description: 'URL to remote repo'
+    description: 'Full url for the repo we are publishing to. Defaults to "https://github.com/${remoteRepo}.git".'
     required: false
   localPackagePath:
     description: 'Local path to Package.swift'
@@ -29,9 +31,6 @@ inputs:
   remotePackagePath:
     description: 'Remote path to Package.swift'
     required: false
-  remoteBranch:
-    description: 'Remote repo branch'
-    required: true
 
 runs:
   using: node20

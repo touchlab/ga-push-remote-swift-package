@@ -2,28 +2,48 @@ import * as core from '@actions/core'
 import simpleGit from 'simple-git'
 import * as fs from 'fs'
 
+function notEmpty(p: string | undefined) {
+  return p && p.trim().length > 0
+}
+
+function assertNotEmpty(p: string | undefined, message: string) {
+  if (!notEmpty(p)) {
+    core.setFailed(message)
+    throw new Error(message)
+  }
+}
+
 export async function run(): Promise<void> {
+  const commitMessage: string = core.getInput('commitMessage')
+  let tagMessage: string = core.getInput('tagMessage')
+  const tagVersion: string = core.getInput('tagVersion')
+  const remoteRepo: string = core.getInput('remoteRepo')
+  let remoteRepoUrl: string = core.getInput('remoteRepoUrl')
+  let localPackagePath: string = core.getInput('localPackagePath')
+  let remotePackagePath: string = core.getInput('remotePackagePath')
+  const remoteBranch: string = core.getInput('remoteBranch')
+
+  core.debug(`commitMessage: ${commitMessage}`)
+  core.debug(`tagMessage: ${tagMessage}`)
+  core.debug(`tagVersion: ${tagVersion}`)
+  core.debug(`remoteRepo: ${remoteRepo}`)
+  core.debug(`remoteRepoUrl: ${remoteRepoUrl}`)
+  core.debug(`localPackagePath: ${localPackagePath}`)
+  core.debug(`remotePackagePath: ${remotePackagePath}`)
+  core.debug(`remoteBranch: ${remoteBranch}`)
+
+  tagMessage = notEmpty(tagMessage) ? tagMessage : `Version ${tagVersion}`
+  remoteRepoUrl = notEmpty(remoteRepoUrl) ? remoteRepoUrl : `https://github.com/${remoteRepo}.git`
+  localPackagePath = notEmpty(localPackagePath) ? localPackagePath : ''
+  remotePackagePath = notEmpty(remotePackagePath) ? remotePackagePath : ''
+
+  assertNotEmpty(commitMessage, "'commitMessage' cannot be empty")
+  assertNotEmpty(tagVersion, "'tagVersion' cannot be empty")
+  assertNotEmpty(remoteRepo, "'remoteRepo' cannot be empty")
+  assertNotEmpty(remoteBranch, "'remoteBranch' cannot be empty")
+
   try {
-    const commitMessage: string = core.getInput('commitMessage')
-    const tagMessage: string = core.getInput('tagMessage')
-    const tagVersion: string = core.getInput('tagVersion')
-    const remoteRepo: string = core.getInput('remoteRepo')
-    let remoteRepoUrl: string = core.getInput('remoteRepoUrl')
-    const localPackagePath: string = core.getInput('localPackagePath')
-    const remotePackagePath: string = core.getInput('remotePackagePath')
-    const remoteBranch: string = core.getInput('remoteBranch')
-
-    core.debug(`commitMessage: ${commitMessage}`)
-    core.debug(`remoteRepo: ${remoteRepo}`)
-    core.debug(`remoteRepoUrl: ${remoteRepoUrl}`)
-    core.debug(`localPackagePath: ${localPackagePath}`)
-    core.debug(`remotePackagePath: ${remotePackagePath}`)
-    core.debug(`remoteBranch: ${remoteBranch}`)
-
-    remoteRepoUrl = remoteRepoUrl ? remoteRepoUrl : `https://github.com/${remoteRepo}.git`
-
     const git = simpleGit()
-
     await git.raw('fetch', remoteRepoUrl, remoteBranch)
 
     await git.raw('branch', 'remote_swift_package', 'FETCH_HEAD')
