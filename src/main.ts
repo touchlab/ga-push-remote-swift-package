@@ -29,8 +29,8 @@ export async function run(): Promise<void> {
     await git.raw('branch', 'remote_swift_package', 'FETCH_HEAD')
     await git.raw('worktree', 'add', '.git/tmp/remote_swift_package', 'remote_swift_package')
 
-    const packageSource = fs.readFileSync(`.${localPackagePath}`, 'utf8')
-    fs.writeFileSync(`.git/tmp/remote_swift_package${remotePackagePath}`, packageSource);
+    const packageSource = fs.readFileSync(`.${localPackagePath}/Package.swift`, 'utf8')
+    fs.writeFileSync(`.git/tmp/remote_swift_package${remotePackagePath}/Package.swift`, packageSource);
 
     const worktreeGit = simpleGit('.git/tmp/remote_swift_package')
     await worktreeGit.add('.')
