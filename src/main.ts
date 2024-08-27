@@ -30,10 +30,10 @@ export async function run(): Promise<void> {
     await git.raw('worktree', 'add', '.git/tmp/remote_swift_package', 'remote_swift_package')
 
     const packageSource = fs.readFileSync(`.${localPackagePath}/Package.swift`, 'utf8')
-    fs.writeFileSync(`.git/tmp/remote_swift_package${remotePackagePath}/Package.swift`, packageSource);
+    fs.writeFileSync(`.git/tmp/remote_swift_package${remotePackagePath}/Package.swift`, packageSource)
 
     const worktreeGit = simpleGit('.git/tmp/remote_swift_package')
-    await worktreeGit.pull() // Get release tag
+    await worktreeGit.raw('fetch', '--tags') // Get release tag
     await worktreeGit.add('.')
     await worktreeGit.commit(commitMessage)
     await worktreeGit.raw('tag', '-fa', tagVersion, '-m', tagMessage)
