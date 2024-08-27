@@ -11,6 +11,12 @@ inputs:
   commitMessage:
     description: 'Message for Package.swift commit'
     required: true
+  tagMessage:
+    description: 'Message for release tag'
+    required: true
+  tagVersion:
+    description: 'The release version'
+    required: true
   remoteRepo:
     description: 'Remote repo [org]/[repo]'
     required: true

@@ -31188,6 +31188,8 @@ const fs = __importStar(__nccwpck_require__(7147));
 async function run() {
     try {
         const commitMessage = core.getInput('commitMessage');
+        const tagMessage = core.getInput('tagMessage');
+        const tagVersion = core.getInput('tagVersion');
         const remoteRepo = core.getInput('remoteRepo');
         let remoteRepoUrl = core.getInput('remoteRepoUrl');
         const localPackagePath = core.getInput('localPackagePath');
@@ -31201,16 +31203,17 @@ async function run() {
         core.debug(`remoteBranch: ${remoteBranch}`);
         remoteRepoUrl = remoteRepoUrl ? remoteRepoUrl : `https://github.com/${remoteRepo}.git`;
         const git = (0, simple_git_1.default)();
-        await git.pull();
         await git.raw('fetch', remoteRepoUrl, remoteBranch);
         await git.raw('branch', 'remote_swift_package', 'FETCH_HEAD');
         await git.raw('worktree', 'add', '.git/tmp/remote_swift_package', 'remote_swift_package');
         const packageSource = fs.readFileSync(`.${localPackagePath}/Package.swift`, 'utf8');
         fs.writeFileSync(`.git/tmp/remote_swift_package${remotePackagePath}/Package.swift`, packageSource);
         const worktreeGit = (0, simple_git_1.default)('.git/tmp/remote_swift_package');
+        await worktreeGit.pull(); // Get release tag
         await worktreeGit.add('.');
         await worktreeGit.commit(commitMessage);
-        await worktreeGit.raw('push', remoteRepoUrl, `remote_swift_package:${remoteBranch}`);
+        await worktreeGit.raw('tag', '-fa', tagVersion, '-m', tagMessage);
+        await worktreeGit.raw('push', '--follow-tags', remoteRepoUrl, `remote_swift_package:${remoteBranch}`);
     }
     catch (error) {
         // Fail the workflow run if an error occurs

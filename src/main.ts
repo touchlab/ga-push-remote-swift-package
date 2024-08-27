@@ -5,6 +5,8 @@ import * as fs from 'fs'
 export async function run(): Promise<void> {
   try {
     const commitMessage: string = core.getInput('commitMessage')
+    const tagMessage: string = core.getInput('tagMessage')
+    const tagVersion: string = core.getInput('tagVersion')
     const remoteRepo: string = core.getInput('remoteRepo')
     let remoteRepoUrl: string = core.getInput('remoteRepoUrl')
     const localPackagePath: string = core.getInput('localPackagePath')
@@ -22,8 +24,6 @@ export async function run(): Promise<void> {
 
     const git = simpleGit()
 
-    await git.pull()
-
     await git.raw('fetch', remoteRepoUrl, remoteBranch)
 
     await git.raw('branch', 'remote_swift_package', 'FETCH_HEAD')
@@ -33,10 +33,11 @@ export async function run(): Promise<void> {
     fs.writeFileSync(`.git/tmp/remote_swift_package${remotePackagePath}/Package.swift`, packageSource);
 
     const worktreeGit = simpleGit('.git/tmp/remote_swift_package')
+    await worktreeGit.pull() // Get release tag
     await worktreeGit.add('.')
     await worktreeGit.commit(commitMessage)
-
-    await worktreeGit.raw('push', remoteRepoUrl, `remote_swift_package:${remoteBranch}`)
+    await worktreeGit.raw('tag', '-fa', tagVersion, '-m', tagMessage)
+    await worktreeGit.raw('push', '--follow-tags', remoteRepoUrl, `remote_swift_package:${remoteBranch}`)
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
