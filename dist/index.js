@@ -31185,23 +31185,41 @@ exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const simple_git_1 = __importDefault(__nccwpck_require__(9103));
 const fs = __importStar(__nccwpck_require__(7147));
+function notEmpty(p) {
+    return p && p.trim().length > 0;
+}
+function assertNotEmpty(p, message) {
+    if (!notEmpty(p)) {
+        core.setFailed(message);
+        throw new Error(message);
+    }
+}
 async function run() {
+    const commitMessage = core.getInput('commitMessage');
+    let tagMessage = core.getInput('tagMessage');
+    const tagVersion = core.getInput('tagVersion');
+    const remoteRepo = core.getInput('remoteRepo');
+    let remoteRepoUrl = core.getInput('remoteRepoUrl');
+    let localPackagePath = core.getInput('localPackagePath');
+    let remotePackagePath = core.getInput('remotePackagePath');
+    const remoteBranch = core.getInput('remoteBranch');
+    core.debug(`commitMessage: ${commitMessage}`);
+    core.debug(`tagMessage: ${tagMessage}`);
+    core.debug(`tagVersion: ${tagVersion}`);
+    core.debug(`remoteRepo: ${remoteRepo}`);
+    core.debug(`remoteRepoUrl: ${remoteRepoUrl}`);
+    core.debug(`localPackagePath: ${localPackagePath}`);
+    core.debug(`remotePackagePath: ${remotePackagePath}`);
+    core.debug(`remoteBranch: ${remoteBranch}`);
+    tagMessage = notEmpty(tagMessage) ? tagMessage : `Version ${tagVersion}`;
+    remoteRepoUrl = notEmpty(remoteRepoUrl) ? remoteRepoUrl : `https://github.com/${remoteRepo}.git`;
+    localPackagePath = notEmpty(localPackagePath) ? localPackagePath : '';
+    remotePackagePath = notEmpty(remotePackagePath) ? remotePackagePath : '';
+    assertNotEmpty(commitMessage, "'commitMessage' cannot be empty");
+    assertNotEmpty(tagVersion, "'tagVersion' cannot be empty");
+    assertNotEmpty(remoteRepo, "'remoteRepo' cannot be empty");
+    assertNotEmpty(remoteBranch, "'remoteBranch' cannot be empty");
     try {
-        const commitMessage = core.getInput('commitMessage');
-        const tagMessage = core.getInput('tagMessage');
-        const tagVersion = core.getInput('tagVersion');
-        const remoteRepo = core.getInput('remoteRepo');
-        let remoteRepoUrl = core.getInput('remoteRepoUrl');
-        const localPackagePath = core.getInput('localPackagePath');
-        const remotePackagePath = core.getInput('remotePackagePath');
-        const remoteBranch = core.getInput('remoteBranch');
-        core.debug(`commitMessage: ${commitMessage}`);
-        core.debug(`remoteRepo: ${remoteRepo}`);
-        core.debug(`remoteRepoUrl: ${remoteRepoUrl}`);
-        core.debug(`localPackagePath: ${localPackagePath}`);
-        core.debug(`remotePackagePath: ${remotePackagePath}`);
-        core.debug(`remoteBranch: ${remoteBranch}`);
-        remoteRepoUrl = remoteRepoUrl ? remoteRepoUrl : `https://github.com/${remoteRepo}.git`;
         const git = (0, simple_git_1.default)();
         await git.raw('fetch', remoteRepoUrl, remoteBranch);
         await git.raw('branch', 'remote_swift_package', 'FETCH_HEAD');
@@ -33137,9 +33155,6 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-/**
- * The entrypoint for the action.
- */
 const main_1 = __nccwpck_require__(399);
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 (0, main_1.run)();
