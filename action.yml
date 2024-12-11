@@ -15,7 +15,7 @@ inputs:
     required: false
   tagVersion:
     description: 'Version string to use in the tag. Should follow semver rules: https://semver.org/.'
-    required: true
+    required: false
   remoteRepo:
     description: 'Repo we are publishing to in [org]/[repo] format.'
     required: true
@@ -25,6 +25,8 @@ inputs:
   remoteRepoUrl:
     description: 'Full url for the repo we are publishing to. Defaults to "https://github.com/${remoteRepo}.git".'
     required: false
+  packageFileOnly:
+    description: 'Set to "true" if you only want to share the `Package.swift` file.'
   localPackagePath:
     description: 'Local path to Package.swift'
     required: false
