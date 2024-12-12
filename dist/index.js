@@ -31224,7 +31224,13 @@ async function run() {
     assertNotEmpty(remoteBranch, '\'remoteBranch\' cannot be empty');
     try {
         const git = (0, simple_git_1.default)();
-        await git.raw('fetch', remoteRepoUrl, remoteBranch);
+        try {
+            await git.raw('fetch', remoteRepoUrl, remoteBranch);
+        }
+        catch (e) {
+            console.log(`Branch ${remoteBranch} not found in remote repo ${remoteRepoUrl}.`);
+            await git.raw('fetch', remoteRepoUrl);
+        }
         await git.raw('branch', 'remote_swift_package', 'FETCH_HEAD');
         await git.raw('worktree', 'add', '.git/tmp/remote_swift_package', 'remote_swift_package');
         if (packageFileOnlyBool) {
