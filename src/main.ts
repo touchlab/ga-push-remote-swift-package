@@ -86,7 +86,7 @@ export async function run(): Promise<void> {
     } else {
       await worktreeGit.add('.')
       await worktreeGit.commit(commitMessage)
-      await worktreeGit.raw('push', remoteRepoUrl, remoteBranch)
+      await worktreeGit.raw('push', remoteRepoUrl, `remote_swift_package:${remoteBranch}`)
     }
   } catch (error) {
     // Fail the workflow run if an error occurs
